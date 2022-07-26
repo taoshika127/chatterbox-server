@@ -29,3 +29,4 @@ var Parse = {
   }
 
 };
+module.exports.Parse = Parse;

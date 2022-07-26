@@ -11,13 +11,19 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var url = require('url');
 
+var Parse = require('../client/scripts/parse').Parse;
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'access-control-allow-headers': 'content-type, accept, authorization',
   'access-control-max-age': 10 // Seconds.
+};
+
+var actions = {
+  'GET': function(request, response) {
+    Parse.readAll((data) => { sendResponse(request, data, statusCOde) });
+  }
 };
 
 var requestHandler = function(request, response) {
@@ -36,7 +42,13 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  const myURl = url.parse(request.url);
+  var action = actions[request.method];
+  console.log('action: ', action);
+  if (action) {
+    action(request, response);
+  } else {
+    console.log('action did not found');
+  }
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
