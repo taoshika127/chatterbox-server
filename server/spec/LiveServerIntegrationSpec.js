@@ -3,21 +3,21 @@ var expect = require('chai').expect;
 
 describe('server', function() {
 
-  it('should respond to GET requests for /classes/messages with a 200 status code', function(done) {
+  it('LiveServer should respond to GET requests for /classes/messages with a 200 status code', function(done) {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
       expect(response.statusCode).to.equal(200);
       done();
     });
   });
 
-  it('should send back parsable stringified JSON', function(done) {
+  it('LiveServer should send back parsable stringified JSON', function(done) {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
       expect(JSON.parse.bind(this, body)).to.not.throw();
       done();
     });
   });
 
-  it('should send back an array', function(done) {
+  it('LiveServer should send back an array', function(done) {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
       var parsedBody = JSON.parse(body);
       expect(parsedBody).to.be.an('array');
@@ -25,7 +25,7 @@ describe('server', function() {
     });
   });
 
-  it('should accept POST requests to /classes/messages', function(done) {
+  it('LiveServer should accept POST requests to /classes/messages', function(done) {
     var requestParams = {method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/messages',
       json: {
@@ -39,7 +39,7 @@ describe('server', function() {
     });
   });
 
-  it('should respond with messages that were previously posted', function(done) {
+  it('LiveServer should respond with messages that were previously posted', function(done) {
     var requestParams = {method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/messages',
       json: {
@@ -58,7 +58,7 @@ describe('server', function() {
     });
   });
 
-  it('Should 404 when asked for a nonexistent endpoint', function(done) {
+  it('LiveServer Should 404 when asked for a nonexistent endpoint', function(done) {
     request('http://127.0.0.1:3000/arglebargle', function(error, response, body) {
       expect(response.statusCode).to.equal(404);
       done();
