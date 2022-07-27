@@ -54,14 +54,27 @@ var requestHandler = function(request, response) {
 
     response.writeHead(200, headers);
     console.log('get 200 successful');
-    readAll(request, response);
-
+    //readAll(request, response);
+    response.end(JSON.stringify(messages));
   } else if (request.url === '/classes/messages' && request.method === 'POST') {
     //console.log('post 201 successful');
     response.writeHead(201, headers);
-    create(request, response);
+    var body = '';
+    request.on('data', (chunk) => {
+      console.log('chunk', chunk.toString());
+      body += chunk.toString();
+    }).on('end', () => {
+      const { username, text } = JSON.parse(body);
+      const message = {
+        username,
+        text
+      };
+      messages.push(message);
+      response.writeHead(201, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify(message));
+    });
+
   } else {
-    //console.log('404 successful');
     response.writeHead(404, { 'Content-Type': 'application/json' });
     response.end(JSON.stringify({ message: 'Route Not Found' }));
   }

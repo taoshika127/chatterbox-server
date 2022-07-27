@@ -1,7 +1,7 @@
 var http = require('http');
 const Message = require('./messagesModel.js');
 
-var getPostData = function(req) {
+function getPostData(req) {
   return new Promise((resolve, reject) => {
     try {
       let body = '';
@@ -54,5 +54,5 @@ async function create(req, res) {
   }
 }
 
-module.exports = {readAll, create};
+module.exports = {readAll, create, getPostData};
 
