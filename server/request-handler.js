@@ -11,7 +11,6 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-const { readAll, create } = require('./messageController');
 const messages = require('./data/messages.json');
 
 var defaultCorsHeaders = {
@@ -38,33 +37,16 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   var headers = defaultCorsHeaders;
-  // if (request.url === '/classes/messages' && request.method === 'POST') {
-  //   statusCode = 201;
-  //   response.writeHead(statusCode, headers);
-
-
-  //   response.end(JSON.stringify(response.data));
-  // } else if (request.url.pathname === '/classes/messages' && request.method === 'GET') {
-  //   statusCode = 200;
-
-  // } else {
-  //   statusCode = 404;
-  // }
   if (request.url === '/classes/messages' && request.method === 'GET') {
-
     response.writeHead(200, headers);
-    console.log('get 200 successful');
-    //readAll(request, response);
     response.end(JSON.stringify(messages));
   } else if (request.url === '/classes/messages' && request.method === 'POST') {
-    //console.log('post 201 successful');
     response.writeHead(201, headers);
     var body = '';
     request.on('data', (chunk) => {
-      console.log('chunk', chunk.toString());
       body += chunk.toString();
     }).on('end', () => {
-      const { username, text } = JSON.parse(body);
+      const { username, text} = JSON.parse(body);
       const message = {
         username,
         text
@@ -115,6 +97,5 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-
 
 module.exports = { requestHandler };
