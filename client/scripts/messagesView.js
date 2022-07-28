@@ -5,7 +5,7 @@ var MessagesView = {
   initialize: function() {
 
     MessagesView.$chats.on('click', '.username', MessagesView.handleClick);
-      },
+  },
 
   render: function() {
 
