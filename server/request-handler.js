@@ -21,15 +21,20 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10, // Seconds.
   'Content-Type': 'applicatoin/json'
 };
-
+var sendResponse = (res, data, statusCode, header) => {
+  statusCode = statusCode || 200;
+  res.writeHead(statusCode, header);
+  res.end(JSON.stringify(data));
+};
 
 var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   var headers = defaultCorsHeaders;
   if (request.url === '/classes/messages' && request.method === 'GET') {
-    response.writeHead(200, headers);
+    sendResponse(response, messages, 200, headers);
 
-    response.end(JSON.stringify(messages));
+  } else if (request.url === '/classes/messages' && request.method === 'OPTIONS') {
+    sendResponse(response, messages, 200, headers);
   } else if (request.url === '/classes/messages' && request.method === 'POST') {
     //console.log('post 201 successful');
     response.writeHead(201, headers);
@@ -38,21 +43,24 @@ var requestHandler = function(request, response) {
       console.log('chunk', chunk.toString());
       body += chunk.toString();
     }).on('end', () => {
-      const { username, text } = JSON.parse(body);
+      const { username, text, roomname } = JSON.parse(body);
       const message = {
         username,
-        text
+        text,
+        roomname
       };
       messages.push(message);
-      response.writeHead(201, { 'Content-Type': 'application/json' });
-      response.end(JSON.stringify(message));
+      sendResponse(response, messages, 201, headers);
+      // response.writeHead(201, { 'Content-Type': 'application/json' });
+      // response.end(JSON.stringify(message));
     });
-
   } else {
-    response.writeHead(404, { 'Content-Type': 'application/json' });
-    response.end(JSON.stringify({ message: 'Route Not Found' }));
+    sendResponse(response, { message: 'Route Not Found' }, 404, headers);
+    // response.writeHead(404, { 'Content-Type': 'application/json' });
+    // response.end(JSON.stringify({ message: 'Route Not Found' }));
   }
 };
+
 
 
 module.exports = { requestHandler };

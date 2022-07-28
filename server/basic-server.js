@@ -13,9 +13,6 @@ var port = 3000;
 // special address that always refers to localhost.
 var ip = '127.0.0.1';
 
-var routes = {
-  '/classes/messages': requestHandler.handleRequest
-};
 
 // We use node's http module to create a server.
 //
