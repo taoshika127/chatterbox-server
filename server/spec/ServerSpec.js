@@ -59,6 +59,30 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
+  it('Server Should accept more than 1 posts to /classes/messages', function() {
+    var stubMsg = {
+      username: 'AA',
+      text: 'test 2!',
+      roomname: 'lobby'
+    };
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(201);
+
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    requestHandler(req, res);
+    var messages = JSON.parse(res._data);
+    expect(messages[0].username).to.equal('Jono');
+    expect(messages[1].username).to.equal('AA');
+    expect(messages[1].roomname).to.equal('lobby');
+    expect(res._ended).to.equal(true);
+  });
+
   it('Server Should respond with messages that were previously posted', function() {
     var stubMsg = {
       username: 'Jono',
@@ -82,6 +106,7 @@ describe('Node Server Request Listener Function', function() {
     expect(messages.length).to.be.above(0);
     expect(messages[0].username).to.equal('Jono');
     expect(messages[0].text).to.equal('Do my bidding!');
+    expect(typeof messages[0].id).to.equal('number');
     expect(res._ended).to.equal(true);
   });
 
@@ -92,6 +117,27 @@ describe('Node Server Request Listener Function', function() {
     requestHandler(req, res);
 
     expect(res._responseCode).to.equal(404);
+    expect(res._ended).to.equal(true);
+  });
+
+  it('Server Should 404 when DELETE requests for /classes/message', function() {
+    var req = new stubs.request('/classes/messages', 'DELETE');
+    var res = new stubs.response();
+
+    requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(404);
+    expect(res._ended).to.equal(true);
+  });
+
+  it('Server Should answer OPTIONS requests for /classes/messages with a 200 status code', function() {
+    var req = new stubs.request('/classes/messages', 'OPTIONS');
+    var res = new stubs.response();
+    console.log('reqres', req, res);
+    requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(200);
+    console.log('res._ended', res._ended);
     expect(res._ended).to.equal(true);
   });
 

@@ -47,7 +47,7 @@ var requestHandler = function(request, response) {
       var message = getPostMessage(body);
       messages.push(message);
       response.writeHead(201, headers);
-      response.end(JSON.stringify(messages));
+      response.end();
     });
   } else {
     response.writeHead(404, headers);
