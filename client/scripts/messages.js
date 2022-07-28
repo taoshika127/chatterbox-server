@@ -1,6 +1,5 @@
 var Messages = {
 
-
   _data: {},
 
   items: function() {
@@ -32,5 +31,5 @@ var Messages = {
     message.roomname = message.roomname || '';
     return message;
   }
-  
+
 };
