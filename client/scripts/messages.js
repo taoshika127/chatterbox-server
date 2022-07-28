@@ -7,15 +7,15 @@ var Messages = {
   },
 
   add: function(message, callback = ()=>{}) {
-    Messages._data[message.message_id] = message;
-    callback(Messages.items());
+    Messages._data[message.id] = message;
+    callback(Messages.items()); //time ordered messages obj array
   },
 
   update: function(messages, callback = ()=>{}) {
     var length = Object.keys(Messages._data).length;
 
     for (let message of messages) {
-      Messages._data[message.message_id] = Messages._conform(message);
+      Messages._data[message.id] = Messages._conform(message);
     }
 
     // only invoke the callback if something changed
@@ -33,3 +33,4 @@ var Messages = {
   }
 
 };
+
