@@ -7,7 +7,12 @@ var Messages = {
   },
 
   add: function(message, callback = ()=>{}) {
-    Messages._data[message.id] = message;
+    if (message.id) {
+      Messages._data[message.id] = message;
+    }
+
+    console.log('after add', Messages._data);
+
     callback(Messages.items()); //time ordered messages obj array
   },
 

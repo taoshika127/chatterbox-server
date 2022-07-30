@@ -22,9 +22,8 @@ var defaultCorsHeaders = {
 };
 
 var getPostMessage = function(body) {
-  const {id, username, text, roomname} = JSON.parse(body);
+  const {username, text, roomname} = JSON.parse(body);
   const message = {
-    id,
     username,
     text,
     roomname
@@ -33,25 +32,36 @@ var getPostMessage = function(body) {
   return message;
 };
 
+var sendResponse = (res, data, statusCode, header) => {
+  statusCode = statusCode || 200;
+  res.writeHead(statusCode, header);
+  res.end(JSON.stringify(data));
+};
+
 var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   var headers = defaultCorsHeaders;
-  if (request.url === '/classes/messages' && (request.method === 'GET' || request.method === 'OPTIONS')) {
-    response.writeHead(200, headers);
-    response.end(JSON.stringify(messages));
-  } else if (request.url === '/classes/messages' && request.method === 'POST') {
-    var body = '';
-    request.on('data', (chunk) => {
-      body += chunk.toString();
-    }).on('end', () => {
-      var message = getPostMessage(body);
-      messages.push(message);
-      response.writeHead(201, headers);
-      response.end();
-    });
+  if (request.url === '/classes/messages') {
+    if (request.method === 'GET') {
+      sendResponse(response, messages, 200, headers);
+    } else if (request.method === 'OPTIONS') {
+      sendResponse(response, {}, 200, headers);
+    } else if (request.method === 'POST') {
+      var body = '';
+      request.on('data', (chunk) => {
+        body += chunk.toString();
+      }).on('end', () => {
+        var message = JSON.parse(body);
+        message.id = messages.length;
+        console.log('message: ', message);
+        messages.push(message);
+        sendResponse(response, message, 201, headers);
+      });
+    } else {
+      sendResponse(response, { message: 'Method Not Found' }, 404, headers);
+    }
   } else {
-    response.writeHead(404, headers);
-    response.end(JSON.stringify({ message: 'Route Not Found' }));
+    sendResponse(response, { message: 'Route Not Found' }, 404, headers);
   }
 };
 
